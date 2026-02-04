@@ -3,279 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Malla Interactiva Enfermería UCM</title>
+    <title>Malla Enfermería UCM</title>
     <style>
-        :root {
-            --no-aprobado: #fce4ec; /* Rosado */
-            --texto-no-aprobado: #880e4f;
-            --aprobado: #7e57c2; /* Morado */
-            --bloqueado: #e0e0e0; /* Gris */
-            --texto-bloqueado: #9e9e9e;
-        }
-
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background-color: #f0f2f5; 
-            margin: 0; 
-            padding: 20px;
-        }
-
-        h1 { text-align: center; color: #1a237e; margin-bottom: 30px; }
-
-        .malla-wrapper {
-            overflow-x: auto;
-            padding-bottom: 20px;
-        }
-
-        .malla-container {
-            display: grid;
-            grid-template-columns: repeat(10, 200px);
-            gap: 15px;
-            min-width: fit-content;
-        }
-
-        .semestre-col {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .semestre-header {
-            text-align: center;
-            font-weight: bold;
-            background: #1a237e;
-            color: white;
-            padding: 8px;
-            border-radius: 4px;
-            margin-bottom: 10px;
-        }
-
-        .ramo {
-            height: 100px;
-            padding: 10px;
-            border-radius: 8px;
-            border: 2px solid #d81b60;
-            background-color: var(--no-aprobado);
-            color: var(--texto-no-aprobado);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            font-size: 11px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            position: relative;
-        }
-
-        .ramo:hover:not(.bloqueado) {
-            transform: translateY(-3px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-
-        .ramo.aprobado {
-            background-color: var(--aprobado);
-            color: white;
-            border-color: #4527a0;
-            text-decoration: line-through;
-        }
-
-        .ramo.bloqueado {
-            background-color: var(--bloqueado);
-            color: var(--texto-bloqueado);
-            border-color: #bdbdbd;
-            cursor: not-allowed;
-        }
-
-        .codigo { font-weight: bold; font-size: 10px; opacity: 0.8; }
-        .nombre { font-size: 12px; font-weight: 600; line-height: 1.2; }
-        .sct { font-style: italic; font-size: 9px; align-self: flex-end; }
-
-        .info-bar {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-around;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-
-        .legend { display: flex; align-items: center; gap: 8px; font-size: 14px; }
-        .dot { width: 15px; height: 15px; border-radius: 3px; }
+        :root { --no-ap: #fce4ec; --ap: #7e57c2; --bl: #e0e0e0; --txt: #880e4f; }
+        body { font-family: sans-serif; background: #f4f7f6; margin: 0; padding: 15px; }
+        h1 { text-align: center; color: #1a237e; font-size: 20px; }
+        .info-bar { background: white; padding: 10px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-around; flex-wrap: wrap; gap: 5px; font-size: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .legend { display: flex; align-items: center; gap: 5px; }
+        .dot { width: 12px; height: 12px; border-radius: 2px; }
+        .malla-wrapper { overflow-x: auto; padding-bottom: 20px; }
+        .malla-container { display: flex; gap: 10px; width: max-content; }
+        .semestre-col { width: 160px; display: flex; flex-direction: column; gap: 8px; }
+        .header { text-align: center; font-weight: bold; background: #1a237e; color: white; padding: 5px; border-radius: 4px; font-size: 13px; }
+        .ramo { min-height: 85px; padding: 8px; border-radius: 6px; border: 2px solid #d81b60; background: var(--no-ap); color: var(--txt); cursor: pointer; display: flex; flex-direction: column; justify-content: space-between; font-size: 10px; transition: 0.2s; }
+        .ramo.aprobado { background: var(--ap); color: white; border-color: #4527a0; text-decoration: line-through; }
+        .ramo.bloqueado { background: var(--bl); color: #9e9e9e; border-color: #bdbdbd; cursor: not-allowed; }
+        .nombre { font-weight: bold; line-height: 1.1; margin: 4px 0; }
     </style>
 </head>
 <body>
-
     <h1>Malla Interactiva Enfermería - UCM</h1>
-
     <div class="info-bar">
-        <div class="legend"><div class="dot" style="background: var(--no-aprobado); border: 1px solid #d81b60;"></div> Pendiente</div>
-        <div class="legend"><div class="dot" style="background: var(--aprobado);"></div> Aprobado</div>
-        <div class="legend"><div class="dot" style="background: var(--bloqueado);"></div> Bloqueado por Requisito</div>
-        <div id="avance" style="font-weight: bold; color: #1a237e;">Progreso: 0%</div>
+        <div class="legend"><div class="dot" style="background:var(--no-ap);border:1px solid #d81b60"></div> Pendiente</div>
+        <div class="legend"><div class="dot" style="background:var(--ap)"></div> Aprobado</div>
+        <div class="legend"><div class="dot" style="background:var(--bl)"></div> Bloqueado</div>
+        <div id="avance" style="font-weight:bold; color:#1a237e">Progreso: 0%</div>
     </div>
-
-    <div class="malla-wrapper">
-        <div class="malla-container" id="malla"></div>
-    </div>
+    <div class="malla-wrapper"><div id="malla" class="malla-container"></div></div>
 
     <script>
-        [span_5](start_span)[span_6](start_span)[span_7](start_span)[span_8](start_span)[span_9](start_span)// Datos basados estrictamente en la Matriz de Requisitos[span_5](end_span)[span_6](end_span)[span_7](end_span)[span_8](end_span)[span_9](end_span)
-        const dataRamos = [
-            // SEMESTRE 1
-            { id: "111", sem: 1, sct: 4, n: "Enfermería Profesión y Disciplina", r: [] },
-            { id: "112", sem: 1, sct: 3, n: "Evolución Paradigmas Salud", r: [] },
-            { id: "113", sem: 1, sct: 4, n: "Fundamentos Químicos", r: [] },
-            { id: "114", sem: 1, sct: 4, n: "Fundamentos Biológicos", r: [] },
-            { id: "115", sem: 1, sct: 8, n: "Morfología Humana I", r: [] },
-            { id: "116", sem: 1, sct: 2, n: "Primeros Auxilios", r: [] },
-            { id: "IFG100", sem: 1, sct: 3, n: "Inglés I", r: [] },
-
-            // SEMESTRE 2
-            { id: "121", sem: 2, sct: 4, n: "Salud Pública", r: [] },
-            { id: "122", sem: 2, sct: 3, n: "Comunicación e Interculturalidad", r: [] },
-            { id: "123", sem: 2, sct: 4, n: "Fundamentos Bioquímicos", r: ["113"] },
-            { id: "124", sem: 2, sct: 4, n: "Biomatemática Aplicada", r: [] },
-            { id: "125", sem: 2, sct: 6, n: "Morfología Humana II", r: ["115"] },
-            { id: "126", sem: 2, sct: 5, n: "Fisiología Humana", r: ["114", "115"] },
-            { id: "127", sem: 2, sct: 3, n: "Psicología General y Evolutiva", r: [] },
-            { id: "IFG200", sem: 2, sct: 3, n: "Inglés II", r: ["IFG100"] },
-
-            // SEMESTRE 3
-            { id: "211", sem: 3, sct: 12, n: "Cuidados en el Ciclo Vital I", r: ["125", "126", "127"] },
-            { id: "212", sem: 3, sct: 3, n: "Introducción a la Investigación", r: [] },
-            { id: "213", sem: 3, sct: 3, n: "Fisiopatología I", r: ["126"] },
-            { id: "214", sem: 3, sct: 3, n: "Farmacología I", r: ["126"] },
-            { id: "215", sem: 3, sct: 5, n: "Microbiología para Enfermería", r: [] },
-            { id: "MFG114", sem: 3, sct: 5, n: "Introducción a la Fe", r: [] },
-
-            // SEMESTRE 4
-            { id: "221", sem: 4, sct: 10, n: "Cuidados en el Ciclo Vital II", r: ["211", "214", "213"] },
-            { id: "222", sem: 4, sct: 3, n: "Paradigmas y Métodos Inv. I", r: ["212"] },
-            { id: "223", sem: 4, sct: 3, n: "Fisiopatología II", r: ["213"] },
-            { id: "224", sem: 4, sct: 3, n: "Farmacología II", r: ["214"] },
-            { id: "225", sem: 4, sct: 3, n: "Estadística Aplicada", r: ["124"] },
-            { id: "226", sem: 4, sct: 2, n: "Integración de Competencias I", r: ["ALL_S3"] },
-            { id: "MFG216", sem: 4, sct: 5, n: "Ética Cristiana", r: [] },
-
-            // SEMESTRE 5
-            { id: "311", sem: 5, sct: 14, n: "Mujer, Neonato, Niño y Adol. (Amb)", r: ["221", "223"] },
-            { id: "312", sem: 5, sct: 3, n: "Paradigmas y Métodos Inv. II", r: ["222"] },
-            { id: "313", sem: 5, sct: 5, n: "Salud Mental y Psiquiatría", r: ["127"] },
-            { id: "314", sem: 5, sct: 3, n: "Gestión y Liderazgo", r: [] },
-            { id: "315", sem: 5, sct: 3, n: "Bioética y Legislación", r: [] },
-
-            // SEMESTRE 6
-            { id: "321", sem: 6, sct: 11, n: "Adulto y Persona Mayor (Amb)", r: ["311"] },
-            { id: "322", sem: 6, sct: 3, n: "Formulación Proyectos Inv.", r: ["312"] },
-            { id: "323", sem: 6, sct: 10, n: "Adulto y Persona Mayor Hosp. I", r: ["311"] },
-            { id: "324", sem: 6, sct: 3, n: "Calidad y Planificación", r: ["314"] },
-            { id: "CFG1", sem: 6, sct: 5, n: "Certificación I", r: [] },
-
-            // SEMESTRE 7
-            { id: "411", sem: 7, sct: 9, n: "Adulto y Persona Mayor Hosp. II", r: ["323"] },
-            { id: "412", sem: 7, sct: 3, n: "Seminario I", r: ["322"] },
-            { id: "413", sem: 7, sct: 6, n: "Neo, Niño y Adol. Hosp. I", r: ["323"] },
-            { id: "414", sem: 7, sct: 4, n: "Enfermería Salud Comunitaria", r: ["321"] },
-            { id: "415", sem: 7, sct: 3, n: "Electivo Profundización I", r: [] },
-            { id: "CFG2", sem: 7, sct: 5, n: "Certificación II", r: [] },
-
-            // SEMESTRE 8
-            { id: "421", sem: 8, sct: 10, n: "Neo, Niño y Adol. Hosp. II", r: ["413"] },
-            { id: "422", sem: 8, sct: 3, n: "Seminario II", r: ["412"] },
-            { id: "423", sem: 8, sct: 4, n: "Urgencia y Desastres", r: ["411"] },
-            { id: "424", sem: 8, sct: 3, n: "Gestión en Centros de Salud", r: ["324"] },
-            { id: "426", sem: 8, sct: 2, n: "Integración de Competencias II", r: ["ALL_S7_EXC_SEM"] },
-            { id: "425", sem: 8, sct: 3, n: "Electivo Profundización II", r: ["415"] },
-            { id: "CFG3", sem: 8, sct: 5, n: "Certificación III", r: [] },
-
-            // SEMESTRE 9
-            { id: "511", sem: 9, sct: 27, n: "Gestión del Cuidado I (Internado)", r: ["426"] },
-            { id: "512", sem: 9, sct: 3, n: "Electivo Profundización III", r: ["425"] },
-
-            // SEMESTRE 10
-            { id: "521", sem: 10, sct: 30, n: "Gestión del Cuidado II (Internado)", r: ["426"] }
+        const data = [
+            [span_0](start_span)// Semestre 1[span_0](end_span)
+            { id:"111", s:1, c:4, n:"Enf. Profesión y Disciplina", r:[] },
+            { id:"112", s:1, c:3, n:"Evolución Paradigmas Salud", r:[] },
+            { id:"113", s:1, c:4, n:"Fundamentos Químicos", r:[] },
+            { id:"114", s:1, c:4, n:"Fundamentos Biológicos", r:[] },
+            { id:"115", s:1, c:8, n:"Morfología Humana I", r:[] },
+            { id:"116", s:1, c:2, n:"Primeros Auxilios", r:[] },
+            { id:"100", s:1, c:3, n:"Inglés I", r:[] },
+            [span_1](start_span)[span_2](start_span)// Semestre 2[span_1](end_span)[span_2](end_span)
+            { id:"121", s:2, c:4, n:"Salud Pública", r:[] },
+            { id:"122", s:2, c:3, n:"Comunicación e Intercult.", r:[] },
+            { id:"123", s:2, c:4, n:"Fund. Bioquímicos", r:["113"] },
+            { id:"124", s:2, c:4, n:"Biomatemática Aplicada", r:[] },
+            { id:"125", s:2, c:6, n:"Morfología Humana II", r:["115"] },
+            { id:"126", s:2, c:5, n:"Fisiología Humana", r:["114","115"] },
+            { id:"127", s:2, c:3, n:"Psicología General", r:[] },
+            { id:"200", s:2, c:3, n:"Inglés II", r:["100"] },
+            [span_3](start_span)// Semestre 3[span_3](end_span)
+            { id:"211", s:3, c:12, n:"Cuid. Ciclo Vital I", r:["125","126","127"] },
+            { id:"212", s:3, c:3, n:"Intro. Investigación", r:[] },
+            { id:"213", s:3, c:3, n:"Fisiopatología I", r:["126"] },
+            { id:"214", s:3, c:3, n:"Farmacología I", r:["126"] },
+            { id:"215", s:3, c:5, n:"Microbiología", r:[] },
+            { id:"114f", s:3, c:5, n:"Intro. a la Fe", r:[] },
+            [span_4](start_span)[span_5](start_span)// Semestre 4[span_4](end_span)[span_5](end_span)
+            { id:"221", s:4, c:10, n:"Cuid. Ciclo Vital II", r:["211","214","213"] },
+            { id:"222", s:4, c:3, n:"Parad. e Inv. I", r:["212"] },
+            { id:"223", s:4, c:3, n:"Fisiopatología II", r:["213"] },
+            { id:"224", s:4, c:3, n:"Farmacología II", r:["214"] },
+            { id:"225", s:4, c:3, n:"Estadística Salud", r:["124"] },
+            { id:"226", s:4, c:2, n:"Integración Comp. I", r:["ALL3"] },
+            { id:"216f", s:4, c:5, n:"Ética Cristiana", r:[] },
+            [span_6](start_span)// Semestre 5[span_6](end_span)
+            { id:"311", s:5, c:14, n:"Mujer, Neo, Niño Amb.", r:["221","223"] },
+            { id:"312", s:5, c:3, n:"Parad. e Inv. II", r:["222"] },
+            { id:"313", s:5, c:5, n:"Salud Mental y Psiq.", r:["127"] },
+            { id:"314", s:5, c:3, n:"Gestión y Liderazgo", r:[] },
+            { id:"315", s:5, c:3, n:"Bioética y Legislación", r:[] },
+            [span_7](start_span)[span_8](start_span)// Semestre 6[span_7](end_span)[span_8](end_span)
+            { id:"321", s:6, c:11, n:"Adulto/Mayor Amb.", r:["311"] },
+            { id:"322", s:6, c:3, n:"Proyectos Inv.", r:["312"] },
+            { id:"323", s:6, c:10, n:"Adulto/Mayor Hosp. I", r:["311"] },
+            { id:"324", s:6, c:3, n:"Calidad y Planif.", r:["314"] },
+            { id:"cfg1", s:6, c:5, n:"Certificación I", r:[] },
+            [span_9](start_span)// Semestre 7[span_9](end_span)
+            { id:"411", s:7, c:9, n:"Adulto/Mayor Hosp. II", r:["323"] },
+            { id:"412", s:7, c:3, n:"Seminario I", r:["322"] },
+            { id:"413", s:7, c:6, n:"Neo, Niño Hosp. I", r:["323"] },
+            { id:"414", s:7, c:4, n:"Salud Comunitaria", r:["321"] },
+            { id:"415", s:7, c:3, n:"Electivo I", r:[] },
+            { id:"cfg2", s:7, c:5, n:"Certificación II", r:[] },
+            [span_10](start_span)[span_11](start_span)// Semestre 8[span_10](end_span)[span_11](end_span)
+            { id:"421", s:8, c:10, n:"Neo, Niño Hosp. II", r:["413"] },
+            { id:"422", s:8, c:3, n:"Seminario II", r:["412"] },
+            { id:"423", s:8, c:4, n:"Urgencia y Desastres", r:["411"] },
+            { id:"424", s:8, c:3, n:"Gestión Centros Salud", r:["324"] },
+            { id:"426", s:8, c:2, n:"Integración Comp. II", r:["ALL7"] },
+            { id:"425", s:8, c:3, n:"Electivo II", r:["415"] },
+            { id:"cfg3", s:8, c:5, n:"Certificación III", r:[] },
+            [span_12](start_span)// Semestre 9 y 10[span_12](end_span)
+            { id:"511", s:9, c:27, n:"Gestión Cuidado I", r:["426"] },
+            { id:"512", s:9, c:3, n:"Electivo III", r:["425"] },
+            { id:"521", s:10, c:30, n:"Gestión Cuidado II", r:["426"] }
         ];
 
-        let aprobados = JSON.parse(localStorage.getItem('ucm_enfermeria_aprobados')) || [];
+        let ap = JSON.parse(localStorage.getItem('ucm_save')) || [];
 
-        function render() {
-            const container = document.getElementById('malla');
-            container.innerHTML = '';
-            
-            for(let s=1; s<=10; s++) {
-                const col = document.createElement('div');
-                col.className = 'semestre-col';
-                col.innerHTML = `<div class="semestre-header">Semestre ${s}</div>`;
-                
-                dataRamos.filter(r => r.sem === s).forEach(ramo => {
-                    const isAprobado = aprobados.includes(ramo.id);
-                    const isLocked = !checkRequisitos(ramo);
-                    
-                    const div = document.createElement('div');
-                    div.className = `ramo ${isAprobado ? 'aprobado' : ''} ${isLocked && !isAprobado ? 'bloqueado' : ''}`;
-                    div.innerHTML = `
-                        <div class="codigo">ENT-ENC ${ramo.id}</div>
-                        <div class="nombre">${ramo.n}</div>
-                        <div class="sct">${ramo.sct} SCT</div>
-                    `;
-                    
-                    if (!isLocked || isAprobado) {
-                        div.onclick = () => toggle(ramo.id);
-                    }
-                    col.appendChild(div);
+        function check(r) {
+            if(!r.r.length) return true;
+            if(r.r[0]==="ALL3") return data.filter(x=>x.s<=3).every(x=>ap.includes(x.id));
+            if(r.r[0]==="ALL7") return data.filter(x=>x.s<=7 && x.id!=="412").every(x=>ap.includes(x.id));
+            return r.r.every(id => ap.includes(id));
+        }
+
+        function draw() {
+            const m = document.getElementById('malla'); m.innerHTML = '';
+            for(let i=1; i<=10; i++) {
+                const col = document.createElement('div'); col.className = 'semestre-col';
+                col.innerHTML = `<div class="header">Semestre ${i}</div>`;
+                data.filter(x=>x.s===i).forEach(r => {
+                    const isAp = ap.includes(r.id), isLo = !check(r);
+                    const d = document.createElement('div');
+                    d.className = `ramo ${isAp?'aprobado':''} ${isLo && !isAp?'bloqueado':''}`;
+                    d.innerHTML = `<span>ENT-${r.id}</span><div class="nombre">${r.n}</div><div style="font-size:8px">${r.c} SCT</div>`;
+                    if(!isLo || isAp) d.onclick = () => {
+                        if(ap.includes(r.id)) ap = ap.filter(x=>x!==r.id); else ap.push(r.id);
+                        localStorage.setItem('ucm_save', JSON.stringify(ap)); draw();
+                    };
+                    col.appendChild(d);
                 });
-                container.appendChild(col);
+                m.appendChild(col);
             }
-            updateProgreso();
+            document.getElementById('avance').innerText = `Progreso: ${Math.round((ap.length/data.length)*100)}%`;
         }
-
-        function checkRequisitos(ramo) {
-            if (ramo.r.length === 0) return true;
-            
-            // Lógica especial para Integraciones
-            if (ramo.r.includes("ALL_S3")) {
-                return dataRamos.filter(r => r.sem <= 3).every(r => aprobados.includes(r.id));
-            }
-            if (ramo.r.includes("ALL_S7_EXC_SEM")) {
-                return dataRamos.filter(r => r.sem <= 7 && r.id !== "412").every(r => aprobados.includes(r.id));
-            }
-
-            return ramo.r.every(reqId => aprobados.includes(reqId));
-        }
-
-        function toggle(id) {
-            if (aprobados.includes(id)) {
-                // Al quitar un aprobado, se deben quitar todos los que dependen de él (cascada)
-                aprobados = aprobados.filter(a => a !== id);
-                limpiarCascada();
-            } else {
-                aprobados.push(id);
-            }
-            localStorage.setItem('ucm_enfermeria_aprobados', JSON.stringify(aprobados));
-            render();
-        }
-
-        function limpiarCascada() {
-            let cambio = true;
-            while(cambio) {
-                cambio = false;
-                aprobados.forEach(id => {
-                    const ramo = dataRamos.find(r => r.id === id);
-                    if (!checkRequisitos(ramo)) {
-                        aprobados = aprobados.filter(a => a !== id);
-                        cambio = true;
-                    }
-                });
-            }
-        }
-
-        function updateProgreso() {
-            const porcentaje = Math.round((aprobados.length / dataRamos.length) * 100);
-            document.getElementById('avance').innerText = `Progreso Carrera: ${porcentaje}%`;
-        }
-
-        render();
+        draw();
     </script>
 </body>
 </html>
